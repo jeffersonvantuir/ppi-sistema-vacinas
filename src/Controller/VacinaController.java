@@ -8,30 +8,31 @@ package Controller;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Model.Fornecedor;
-import Model.Paciente;
+import Model.Vacina;
 
 /**
  *
  * @author Jefferson Vantuir
  */
-public class FornecedorController {
+public class VacinaController {
     private Connection conn;
     
-    public FornecedorController(Connection conn) {
+    public VacinaController(Connection conn) {
         this.conn = conn;
     }
     
-    public String inserirFornecedor (Fornecedor cont){
-    String SQL = "INSERT INTO fornecedores (cnpj, nome) values(?,?);";
+    public String inserirVacina (Vacina vac){
+    String SQL = "INSERT INTO vacinas (nome, lote, validade, qtd_estoque) VALUES (?,?,?,?);";
     try{
         PreparedStatement ps = conn.prepareStatement(SQL);
-        ps.setString(1, cont.getCnpj());
-        ps.setString(2, cont.getNomeFornecedor());
+        ps.setString(1, vac.getNome());
+        ps.setString(2, vac.getLote());
+        ps.setDate(3, vac.getValidade());
+        ps.setInt(4, vac.getQtd_estoque());
         if(ps.executeUpdate()>0){
-            return "Fornecedor Cadastrado com Sucesso!!!";
+            return "Vacina Cadastrada com Sucesso!!!";
         }else{
-            return "Falha ao Cadastrar Fornecedor!!!";
+            return "Falha ao Cadastrar Vacina!!!";
         }
     
     }catch(SQLException e){
@@ -39,55 +40,59 @@ public class FornecedorController {
     }
 
     }
-    public String alterarFornecedor (Fornecedor forn){
-    String SQL = "UPDATE fornecedores SET nome = ? WHERE cnpj = '"+forn.getCnpj()+"';";
+    public String alterarVacina (Vacina vac){
+    String SQL = "UPDATE vacinas SET validade = ?, qtd_estoque = ? WHERE nome = '"+vac.getNome()+"' AND lote = '"+vac.getLote()+"';";
         try{
             PreparedStatement ps= conn.prepareStatement(SQL);
-            ps.setString(1, forn.getNomeFornecedor());
+            ps.setDate(1, vac.getValidade());
+            ps.setInt(2, vac.getQtd_estoque());
             if(ps.executeUpdate() > 0){
-                return "Fornecedor Alterado com Sucesso!!!";
+                return "Vacina Alterada com Sucesso!!!";
             } else {
-                return "Falha ao Alterar Fornecedor!!!";
+                return "Falha ao Alterar Vacina!!!";
             }
         } catch(SQLException e) {
             return e.getMessage();
         }
     }    
-    public String excluirFornecedor (Fornecedor forn){
-    String SQL = "DELETE FROM fornecedores WHERE cnpj = ?;";
+    public String excluirVacina (Vacina vac){
+    String SQL = "DELETE FROM vacinas WHERE nome = ? AND lote = ?;";
         try{
             PreparedStatement ps = conn.prepareStatement(SQL);
-            ps.setString(1, forn.getCnpj());
+            ps.setString(1, vac.getNome());
+            ps.setString(2, vac.getLote());
             ps.executeUpdate();//podemos retirar este aqui.
-            return "Fornecedor Excluído com Sucesso!!!";
+            return "Vacina Excluída com Sucesso!!!";
         } catch(SQLException e) {
             return e.getMessage();
         }
     }
     
     
-    public List<Fornecedor> listarTodosFornecedores(String texto) {
-        String SQL="SELECT * FROM fornecedores WHERE nome LIKE '%"+texto+"%' ORDER BY cnpj;";
-        List<Fornecedor> listaforn = new ArrayList<Fornecedor>();
+    public List<Vacina> listarTodasVacinas(String texto) {
+        String SQL="SELECT * FROM vacinas WHERE nome LIKE '%"+texto+"%' ORDER BY nome;";
+        List<Vacina> listavac = new ArrayList<Vacina>();
        try {
             PreparedStatement ps = conn.prepareStatement(SQL);
             ResultSet rs = ps.executeQuery(); 
             if(rs !=null){
                 while(rs.next()){
-                    Fornecedor forn = new Fornecedor();
-                    forn.setCnpj(rs.getString("cnpj"));
-                    forn.setNomeFornecedor(rs.getString("nome"));
-                    listaforn.add(forn);
+                    Vacina vac = new Vacina();
+                    vac.setNome(rs.getString("nome"));
+                    vac.setLote(rs.getString("lote"));
+                    vac.setValidade(rs.getDate("validade"));
+                    vac.setQtd_estoque(rs.getInt("qtd_estoque"));
+                    listavac.add(vac);
                 }
             }
-            return listaforn;
+            return listavac;
         } catch (SQLException e) {
             return null;
         }
     }
     
     public int numeroTotalRegistros() {
-        String SQL = "SELECT count(*) FROM fornecedores";
+        String SQL = "SELECT count(*) FROM vacinas";
         int numt = 0;
         try {
             PreparedStatement ps = conn.prepareStatement(SQL);

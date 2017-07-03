@@ -16,7 +16,7 @@ public class Paciente {
     public String nome;
     public String email;
     public String telefone;
-    public char sexo;
+    public String sexo;
     public Date data_nasc;
 
     public String getCpf() {
@@ -51,11 +51,11 @@ public class Paciente {
         this.telefone = telefone;
     }
 
-    public char getSexo() {
+    public String getSexo() {
         return sexo;
     }
 
-    public void setSexo(char sexo) {
+    public void setSexo(String sexo) {
         this.sexo = sexo;
     }
 
