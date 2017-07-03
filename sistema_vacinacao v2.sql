@@ -1,9 +1,9 @@
-CREATE TABLE fornecedores (
+CREATE TABLE IF NOT EXISTS fornecedores (
 	cnpj VARCHAR(20) PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE vacinas (
+CREATE TABLE IF NOT EXISTS vacinas (
 	nome VARCHAR(50) NOT NULL,
 	lote VARCHAR(50) NOT NULL,
 	validade DATE DEFAULT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE vacinas (
 	PRIMARY KEY (nome, lote)
 );
 
-CREATE TABLE vacinas_fornecedores (
+CREATE TABLE IF NOT EXISTS vacinas_fornecedores (
 	cod SERIAL PRIMARY KEY,
 	qtde INT NOT NULL,
 	data DATE NOT NULL,
@@ -23,14 +23,14 @@ CREATE TABLE vacinas_fornecedores (
 	FOREIGN KEY (cnpj_fornecedor) REFERENCES fornecedores(cnpj)
 );
 
-CREATE TABLE funcionarios (
+CREATE TABLE IF NOT EXISTS funcionarios (
 	cod SERIAL PRIMARY KEY,
 	crm VARCHAR(20),
 	nome VARCHAR(100) NOT NULL,
 	cpf CHAR(11) DEFAULT NULL
 );
 
-CREATE TABLE pacientes (
+CREATE TABLE IF NOT EXISTS pacientes (
 	cpf CHAR(11) PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL,
 	email VARCHAR(100),
@@ -40,7 +40,7 @@ CREATE TABLE pacientes (
 );
 
 
-CREATE TABLE cartao_vacina (
+CREATE TABLE IF NOT EXISTS cartao_vacina (
 	cod SERIAL PRIMARY KEY,
 	n_dose INT DEFAULT 1,
 	data DATE NOT NULL,
@@ -53,8 +53,6 @@ CREATE TABLE cartao_vacina (
 	FOREIGN KEY (cpf_paciente) REFERENCES pacientes(cpf),
 	FOREIGN KEY (cod_funcionario) REFERENCES funcionarios(cod)
 );
-
-drop table cartao_vacina;
 
 -------------- TRIGGERS ---------------
 
@@ -112,13 +110,3 @@ BEGIN
 	RETURN NEW;
 END;
 $cadastrar_vacinas$ LANGUAGE PLPGSQL;
-
-select * from pacientes;
-select * from cartao_vacina;
-select * from vacinas;
-
-INSERT INTO funcionarios VALUES ('CRM01', 'Dr. Pedrao', '00011122233');
-
-INSERT INTO cartao_vacina (n_dose, pendente, data, preco, nome_vac, lote_vac, cpf_paciente, crm_funcionario) VALUES
-(1, FALSE, '12-06-2017', 2.99, 'Vacina Teste 1', 'abcd', '03173871030', 'CRM01');
-
